@@ -1,11 +1,17 @@
 import React from 'react'
 import { hot } from 'react-hot-loader'
 import includes from 'lodash/includes'
+import styled from 'react-emotion'
 import ParseMapWorker from './parse-map.worker'
+import GetStarted from './GetStarted'
 import Map from './Map'
 import './App.css'
 
 const SUPPORTED_FILE_TYPES = ['text/html', 'image/svg+xml']
+
+const Root = styled.div`
+    ${tw`h-full w-full`};
+`
 
 class App extends React.Component {
     state = {
@@ -49,21 +55,28 @@ class App extends React.Component {
     }
 
     render() {
-        console.log(window.innerWidth, window.innerHeight)
         return (
-            <div>
-                <input type="file" accept={SUPPORTED_FILE_TYPES.join(',')} onChange={this.handleFileChange} />
-                <button disabled={!this.state.selectedFile} onClick={this.handleProcessFile}>
-                    Process file
-                </button>
-                {this.state.mapData && (
-                    <Map
-                        {...this.state.mapData}
-                        displayedLabel={this.state.displayedLabel}
-                        onSetDisplayedLabel={this.handleSetDisplayedLabel}
-                    />
-                )}
-            </div>
+            <Root>
+                {/*<input type="file" accept={SUPPORTED_FILE_TYPES.join(',')} onChange={this.handleFileChange} />*/}
+                {/*<button disabled={!this.state.selectedFile} onClick={this.handleProcessFile}>*/}
+                {/*Process file*/}
+                {/*</button>*/}
+                {this.state.mapData ? this.renderMap() : this.renderGetStarted()}
+            </Root>
+        )
+    }
+
+    renderGetStarted() {
+        return <GetStarted supportedFileTypes={SUPPORTED_FILE_TYPES} onSubmitFile={this.handleProcessFile} />
+    }
+
+    renderMap() {
+        return (
+            <Map
+                {...this.state.mapData}
+                displayedLabel={this.state.displayedLabel}
+                onSetDisplayedLabel={this.handleSetDisplayedLabel}
+            />
         )
     }
 }

@@ -1,5 +1,17 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:300,400,500');
+
+@tailwind preflight;
+@tailwind components;
+
 body {
+  @apply absolute pin font-sans;
+
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
 }
+
+#root {
+  @apply h-full w-full;
+}
+
+@tailwind utilities;
