@@ -1,13 +1,15 @@
-import React, { Component } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { css } from 'react-emotion'
+import fromRenderProps from 'recompose/fromRenderProps'
+import MapContext from '../MapContext'
 import Industry from './Industry'
 import Label from './Label'
 import Town from './Town'
-import * as PropTypes from 'prop-types'
 
 const mapRoot = css(tw`overflow-hidden`)
 
-class Map extends Component {
+class Map extends React.Component {
     state = {
         width: window.innerWidth,
         height: window.innerHeight
@@ -26,7 +28,7 @@ class Map extends Component {
     }
 
     render() {
-        let { size, towns, industries, displayedLabel, onSetDisplayedLabel } = this.props
+        let { size, towns, industries, displayedLabel, onSetDisplayedLabel, onSetSelectedDetail } = this.props
         const onScreenFontSize = 10
         const scale = Math.max(size.width / this.state.width, size.height / this.state.height)
         const onScreenTownSize = 6
@@ -57,6 +59,7 @@ class Map extends Component {
                                 label={label}
                                 displayedLabel={displayedLabel}
                                 onSetDisplayedLabel={onSetDisplayedLabel}
+                                onSetSelectedDetail={onSetSelectedDetail}
                             />
                         ))}
                     </g>
@@ -109,4 +112,12 @@ Map.propTypes = {
     onSetDisplayedLabel: PropTypes.any
 }
 
-export default Map
+export default fromRenderProps(
+    MapContext.Consumer,
+    ({ mapData, displayedLabel, onSetDisplayedLabel, onSetSelectedDetail }) => ({
+        ...mapData,
+        displayedLabel,
+        onSetDisplayedLabel,
+        onSetSelectedDetail
+    })
+)(Map)

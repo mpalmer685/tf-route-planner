@@ -1,6 +1,8 @@
 import React from 'react'
 import { hot } from 'react-hot-loader'
 import styled from 'react-emotion'
+import MapContext from './MapContext'
+import Detail from './Detail'
 import GetStarted from './GetStarted'
 import Map from './Map'
 import Menu from './Menu'
@@ -12,15 +14,14 @@ const Root = styled.div(tw`h-full w-full bg-grey-lighter`)
 class App extends React.Component {
     state = {
         mapData: null,
-        displayedLabel: null
+        displayedLabel: null,
+        onSetDisplayedLabel: displayedLabel => this.setState({ displayedLabel }),
+        selectedDetail: null,
+        onSetSelectedDetail: selectedDetail => this.setState({ selectedDetail })
     }
 
     handleProcessFile = mapData => {
         this.setState({ mapData })
-    }
-
-    handleSetDisplayedLabel = label => {
-        this.setState({ displayedLabel: label })
     }
 
     render() {
@@ -33,14 +34,11 @@ class App extends React.Component {
 
     renderMap() {
         return (
-            <React.Fragment>
-                <Map
-                    {...this.state.mapData}
-                    displayedLabel={this.state.displayedLabel}
-                    onSetDisplayedLabel={this.handleSetDisplayedLabel}
-                />
+            <MapContext.Provider value={this.state}>
+                <Map />
                 <Menu />
-            </React.Fragment>
+                <Detail />
+            </MapContext.Provider>
         )
     }
 }

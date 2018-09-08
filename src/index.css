@@ -4,7 +4,7 @@
 @tailwind components;
 
 body {
-  @apply absolute pin font-sans;
+  @apply absolute pin font-sans text-black;
 
   margin: 0;
   padding: 0;
