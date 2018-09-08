@@ -6,5 +6,7 @@ export default React.createContext({
     displayedLabel: null,
     onSetDisplayedLabel: noOp,
     selectedDetail: null,
-    onSetSelectedDetail: noOp
+    onSetSelectedDetail: noOp,
+    selectedFilters: [],
+    setSelectedFilters: noOp
 })

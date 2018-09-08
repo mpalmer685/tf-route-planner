@@ -17,7 +17,9 @@ class App extends React.Component {
         displayedLabel: null,
         onSetDisplayedLabel: displayedLabel => this.setState({ displayedLabel }),
         selectedDetail: null,
-        onSetSelectedDetail: selectedDetail => this.setState({ selectedDetail })
+        onSetSelectedDetail: selectedDetail => this.setState({ selectedDetail }),
+        selectedFilters: ['towns', 'industries'],
+        onSetSelectedFilters: selectedFilters => this.setState({ selectedFilters })
     }
 
     handleProcessFile = mapData => {

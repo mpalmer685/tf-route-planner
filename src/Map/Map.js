@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import includes from 'lodash/includes'
 import { css } from 'react-emotion'
 import fromRenderProps from 'recompose/fromRenderProps'
 import MapContext from '../MapContext'
@@ -49,33 +50,37 @@ class Map extends React.Component {
                         stroke="#666"
                         strokeWidth="2"
                     />
-                    <g>
-                        {towns.map(({ x, y, label }) => (
-                            <Town
-                                key={label}
-                                x={x}
-                                y={y}
-                                size={scale * onScreenTownSize}
-                                label={label}
-                                displayedLabel={displayedLabel}
-                                onSetDisplayedLabel={onSetDisplayedLabel}
-                                onSetSelectedDetail={onSetSelectedDetail}
-                            />
-                        ))}
-                    </g>
-                    <g>
-                        {industries.map(({ x, y, label }) => (
-                            <Industry
-                                key={label}
-                                x={x}
-                                y={y}
-                                size={scale * onScreenIndustrySize}
-                                label={label}
-                                displayedLabel={displayedLabel}
-                                onSetDisplayedLabel={onSetDisplayedLabel}
-                            />
-                        ))}
-                    </g>
+                    {includes(this.props.selectedFilters, 'towns') && (
+                        <g>
+                            {towns.map(({ x, y, label }) => (
+                                <Town
+                                    key={label}
+                                    x={x}
+                                    y={y}
+                                    size={scale * onScreenTownSize}
+                                    label={label}
+                                    displayedLabel={displayedLabel}
+                                    onSetDisplayedLabel={onSetDisplayedLabel}
+                                    onSetSelectedDetail={onSetSelectedDetail}
+                                />
+                            ))}
+                        </g>
+                    )}
+                    {includes(this.props.selectedFilters, 'industries') && (
+                        <g>
+                            {industries.map(({ x, y, label }) => (
+                                <Industry
+                                    key={label}
+                                    x={x}
+                                    y={y}
+                                    size={scale * onScreenIndustrySize}
+                                    label={label}
+                                    displayedLabel={displayedLabel}
+                                    onSetDisplayedLabel={onSetDisplayedLabel}
+                                />
+                            ))}
+                        </g>
+                    )}
                     <g>
                         {towns.map(({ x, y, label }) => (
                             <Label
@@ -114,9 +119,10 @@ Map.propTypes = {
 
 export default fromRenderProps(
     MapContext.Consumer,
-    ({ mapData, displayedLabel, onSetDisplayedLabel, onSetSelectedDetail }) => ({
+    ({ mapData, displayedLabel, selectedFilters, onSetDisplayedLabel, onSetSelectedDetail }) => ({
         ...mapData,
         displayedLabel,
+        selectedFilters,
         onSetDisplayedLabel,
         onSetSelectedDetail
     })

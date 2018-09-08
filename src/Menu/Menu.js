@@ -1,7 +1,11 @@
 import React from 'react'
 import styled, { cx } from 'react-emotion'
 import posed from 'react-pose'
+import compose from 'recompose/compose'
+import fromRenderProps from 'recompose/fromRenderProps'
 import withStateHandlers from 'recompose/withStateHandlers'
+import MapContext from '../MapContext'
+import Filters from './Filters'
 
 const transition = {
     type: 'spring',
@@ -57,22 +61,30 @@ const menuPoses = {
     closed: { x: '-100%', transition }
 }
 const MenuContainer = styled(posed.div(menuPoses))`
-    ${tw`fixed pin-y pin-l pl-8 bg-grey-lightest shadow-md`};
+    ${tw`fixed pin-y pin-l pl-10 pt-10 pr-2 bg-grey-lightest shadow-md`};
     width: 18rem;
 `
 
-const Menu = ({ open, onToggle }) => (
+const Menu = ({ open, selectedFilters, onToggle, onSetSelectedFilters }) => (
     <React.Fragment>
-        <MenuContainer pose={open ? 'open' : 'closed'} />
+        <MenuContainer pose={open ? 'open' : 'closed'}>
+            <Filters selectedFilters={selectedFilters} onSetSelectedFilters={onSetSelectedFilters} />
+        </MenuContainer>
         <MenuButton pose={open ? 'open' : 'closed'} className={cx({ open })} onClick={onToggle}>
             <MenuButtonIcon />
         </MenuButton>
     </React.Fragment>
 )
 
-export default withStateHandlers(
-    { open: false },
-    {
-        onToggle: ({ open }) => () => ({ open: !open })
-    }
+export default compose(
+    withStateHandlers(
+        { open: false },
+        {
+            onToggle: ({ open }) => () => ({ open: !open })
+        }
+    ),
+    fromRenderProps(MapContext.Consumer, ({ selectedFilters, onSetSelectedFilters }) => ({
+        selectedFilters,
+        onSetSelectedFilters
+    }))
 )(Menu)
