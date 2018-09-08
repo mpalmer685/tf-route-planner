@@ -33,14 +33,14 @@ const statusIndicator = css`
     box-shadow: 0 0 0 4px ${Colors['grey-light']};
     transition: box-shadow 400ms;
     
-    > svg {
+    svg {
         transition: opacity 400ms;
     }
 `
 const statusIndicatorActive = css`
     box-shadow: 0 0 0 4px ${Colors['green-light']}, inset 0 0 64px ${Colors['green-light']};
 
-    > svg {
+    svg {
         opacity: 0.25;
     }
 `
@@ -54,7 +54,7 @@ const statusIndicatorLoading = css`
         animation: ${loadingAnimation} 1s ease-in-out infinite alternate;
     }
 
-    > svg {
+    svg {
         opacity: 0;
     }
 `

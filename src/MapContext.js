@@ -8,5 +8,7 @@ export default React.createContext({
     selectedDetail: null,
     onSetSelectedDetail: noOp,
     selectedFilters: [],
-    setSelectedFilters: noOp
+    setSelectedFilters: noOp,
+    selectedGroundColor: 'us',
+    onSetGroundColor: noOp
 })

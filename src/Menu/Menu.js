@@ -6,6 +6,7 @@ import fromRenderProps from 'recompose/fromRenderProps'
 import withStateHandlers from 'recompose/withStateHandlers'
 import MapContext from '../MapContext'
 import Filters from './Filters'
+import GroundColor from './GroundColor'
 
 const transition = {
     type: 'spring',
@@ -65,10 +66,11 @@ const MenuContainer = styled(posed.div(menuPoses))`
     width: 18rem;
 `
 
-const Menu = ({ open, selectedFilters, onToggle, onSetSelectedFilters }) => (
+const Menu = ({ open, selectedFilters, selectedGroundColor, onToggle, onSetSelectedFilters, onSetGroundColor }) => (
     <React.Fragment>
         <MenuContainer pose={open ? 'open' : 'closed'}>
             <Filters selectedFilters={selectedFilters} onSetSelectedFilters={onSetSelectedFilters} />
+            <GroundColor selected={selectedGroundColor} onChange={onSetGroundColor}/>
         </MenuContainer>
         <MenuButton pose={open ? 'open' : 'closed'} className={cx({ open })} onClick={onToggle}>
             <MenuButtonIcon />
@@ -83,8 +85,10 @@ export default compose(
             onToggle: ({ open }) => () => ({ open: !open })
         }
     ),
-    fromRenderProps(MapContext.Consumer, ({ selectedFilters, onSetSelectedFilters }) => ({
+    fromRenderProps(MapContext.Consumer, ({ selectedFilters, selectedGroundColor, onSetSelectedFilters, onSetGroundColor }) => ({
         selectedFilters,
-        onSetSelectedFilters
+        selectedGroundColor,
+        onSetSelectedFilters,
+        onSetGroundColor
     }))
 )(Menu)

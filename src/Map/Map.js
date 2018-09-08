@@ -8,6 +8,12 @@ import Industry from './Industry'
 import Label from './Label'
 import Town from './Town'
 
+const colors = {
+    sky: '#B7DCE2',
+    groundUs: '#A47F4B',
+    groundEu: '#627C3F'
+}
+
 const mapRoot = css(tw`overflow-hidden`)
 
 class Map extends React.Component {
@@ -42,13 +48,18 @@ class Map extends React.Component {
                     height={this.state.height}
                     viewBox={`0 0 ${size.width} ${size.height}`}>
                     <rect
+                        x={-size.width}
+                        y={-size.height}
+                        width={3 * size.width}
+                        height={3 * size.height}
+                        fill={colors.sky}
+                    />
+                    <rect
                         x={0}
                         y={0}
                         height={size.height}
                         width={size.width}
-                        fill="none"
-                        stroke="#666"
-                        strokeWidth="2"
+                        fill={this.props.selectedGroundColor === 'us' ? colors.groundUs : colors.groundEu}
                     />
                     {includes(this.props.selectedFilters, 'towns') && (
                         <g>
@@ -119,10 +130,11 @@ Map.propTypes = {
 
 export default fromRenderProps(
     MapContext.Consumer,
-    ({ mapData, displayedLabel, selectedFilters, onSetDisplayedLabel, onSetSelectedDetail }) => ({
+    ({ mapData, displayedLabel, selectedFilters, selectedGroundColor, onSetDisplayedLabel, onSetSelectedDetail }) => ({
         ...mapData,
         displayedLabel,
         selectedFilters,
+        selectedGroundColor,
         onSetDisplayedLabel,
         onSetSelectedDetail
     })

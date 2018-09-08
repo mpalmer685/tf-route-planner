@@ -19,7 +19,9 @@ class App extends React.Component {
         selectedDetail: null,
         onSetSelectedDetail: selectedDetail => this.setState({ selectedDetail }),
         selectedFilters: ['towns', 'industries'],
-        onSetSelectedFilters: selectedFilters => this.setState({ selectedFilters })
+        onSetSelectedFilters: selectedFilters => this.setState({ selectedFilters }),
+        selectedGroundColor: 'us',
+        onSetGroundColor: selectedGroundColor => this.setState({ selectedGroundColor })
     }
 
     handleProcessFile = mapData => {
