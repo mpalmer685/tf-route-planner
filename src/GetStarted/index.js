@@ -29,7 +29,7 @@ const loadingAnimation = keyframes`
 
 // prettier-ignore
 const statusIndicator = css`
-    ${tw`h-64 w-64 relative rounded-full inline-block mb-4 inline-flex items-center justify-center`}
+    ${tw`h-64 w-64 relative rounded-full inline-block mb-4 inline-flex items-center justify-center`};
     box-shadow: 0 0 0 4px ${Colors['grey-light']};
     transition: box-shadow 400ms;
     

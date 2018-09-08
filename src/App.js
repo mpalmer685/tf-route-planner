@@ -3,7 +3,7 @@ import { hot } from 'react-hot-loader'
 import styled from 'react-emotion'
 import GetStarted from './GetStarted'
 import Map from './Map'
-import './App.css'
+import Menu from './Menu'
 
 const SUPPORTED_FILE_TYPES = ['text/html', 'image/svg+xml']
 
@@ -33,11 +33,14 @@ class App extends React.Component {
 
     renderMap() {
         return (
-            <Map
-                {...this.state.mapData}
-                displayedLabel={this.state.displayedLabel}
-                onSetDisplayedLabel={this.handleSetDisplayedLabel}
-            />
+            <React.Fragment>
+                <Map
+                    {...this.state.mapData}
+                    displayedLabel={this.state.displayedLabel}
+                    onSetDisplayedLabel={this.handleSetDisplayedLabel}
+                />
+                <Menu />
+            </React.Fragment>
         )
     }
 }

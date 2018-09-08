@@ -22,6 +22,7 @@
     "react-dom": "^16.4.2",
     "react-dropzone": "^5.0.1",
     "react-emotion": "^9.2.8",
+    "react-pose": "^3.3.0",
     "react-scripts": "1.1.5",
     "recompose": "^0.30.0",
     "skmeans": "^0.9.8"
