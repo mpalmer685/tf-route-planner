@@ -7,6 +7,7 @@ import withStateHandlers from 'recompose/withStateHandlers'
 import MapContext from '../MapContext'
 import Filters from './Filters'
 import GroundColor from './GroundColor'
+import Lines from './Lines'
 
 const transition = {
     type: 'spring',
@@ -65,12 +66,20 @@ const MenuContainer = styled(posed.div(menuPoses))`
     ${tw`fixed pin-y pin-l pl-10 pt-10 pr-2 bg-grey-lightest shadow-md`};
     width: 18rem;
 `
+const MenuSection = styled('div')(tw`mb-6`)
 
 const Menu = ({ open, selectedFilters, selectedGroundColor, onToggle, onSetSelectedFilters, onSetGroundColor }) => (
     <React.Fragment>
         <MenuContainer pose={open ? 'open' : 'closed'}>
-            <Filters selectedFilters={selectedFilters} onSetSelectedFilters={onSetSelectedFilters} />
-            <GroundColor selected={selectedGroundColor} onChange={onSetGroundColor}/>
+            <MenuSection>
+                <Lines />
+            </MenuSection>
+            <MenuSection>
+                <Filters selectedFilters={selectedFilters} onSetSelectedFilters={onSetSelectedFilters} />
+            </MenuSection>
+            <MenuSection>
+                <GroundColor selected={selectedGroundColor} onChange={onSetGroundColor} />
+            </MenuSection>
         </MenuContainer>
         <MenuButton pose={open ? 'open' : 'closed'} className={cx({ open })} onClick={onToggle}>
             <MenuButtonIcon />
@@ -85,10 +94,13 @@ export default compose(
             onToggle: ({ open }) => () => ({ open: !open })
         }
     ),
-    fromRenderProps(MapContext.Consumer, ({ selectedFilters, selectedGroundColor, onSetSelectedFilters, onSetGroundColor }) => ({
-        selectedFilters,
-        selectedGroundColor,
-        onSetSelectedFilters,
-        onSetGroundColor
-    }))
+    fromRenderProps(
+        MapContext.Consumer,
+        ({ selectedFilters, selectedGroundColor, onSetSelectedFilters, onSetGroundColor }) => ({
+            selectedFilters,
+            selectedGroundColor,
+            onSetSelectedFilters,
+            onSetGroundColor
+        })
+    )
 )(Menu)

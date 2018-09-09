@@ -6,6 +6,7 @@ import Detail from './Detail'
 import GetStarted from './GetStarted'
 import Map from './Map'
 import Menu from './Menu'
+import * as state from './state'
 
 const SUPPORTED_FILE_TYPES = ['text/html', 'image/svg+xml']
 
@@ -18,10 +19,16 @@ class App extends React.Component {
         onSetDisplayedLabel: displayedLabel => this.setState({ displayedLabel }),
         selectedDetail: null,
         onSetSelectedDetail: selectedDetail => this.setState({ selectedDetail }),
-        selectedFilters: ['towns', 'industries'],
+        selectedFilters: ['towns', 'industries', 'lines'],
         onSetSelectedFilters: selectedFilters => this.setState({ selectedFilters }),
         selectedGroundColor: 'us',
-        onSetGroundColor: selectedGroundColor => this.setState({ selectedGroundColor })
+        onSetGroundColor: selectedGroundColor => this.setState({ selectedGroundColor }),
+        lines: [],
+        onAddLine: state.createAddLine(this.setState.bind(this)),
+        onRenameLine: state.createRenameLine(this.setState.bind(this)),
+        onChangeLineColor: state.createChangeLineColor(this.setState.bind(this)),
+        onAddStop: state.createAddStop(this.setState.bind(this)),
+        onRemoveStop: state.createRemoveStop(this.setState.bind(this))
     }
 
     handleProcessFile = mapData => {

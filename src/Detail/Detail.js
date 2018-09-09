@@ -4,7 +4,8 @@ import posed from 'react-pose'
 import compose from 'recompose/compose'
 import fromRenderProps from 'recompose/fromRenderProps'
 import withHandlers from 'recompose/withHandlers'
-import MapContext from './MapContext'
+import MapContext from '../MapContext'
+import LineDetail from './LineDetail'
 
 const transition = {
     type: 'tween'
@@ -26,9 +27,20 @@ const CloseButton = styled('button')`
 const Detail = ({ selectedDetail, onClose }) => (
     <DetailContainer pose={selectedDetail ? 'open' : 'closed'}>
         <CloseButton onClick={onClose}>{'\u00d7'}</CloseButton>
-        <div>{selectedDetail}</div>
+        {selectedDetail && <div>{renderDetail(selectedDetail)}</div>}
     </DetailContainer>
 )
+
+function renderDetail(selectedDetail) {
+    switch (selectedDetail.type) {
+        case 'line':
+            return <LineDetail lineId={selectedDetail.id} />
+        case 'station':
+            return selectedDetail.name
+        default:
+            return null
+    }
+}
 
 export default compose(
     fromRenderProps(MapContext.Consumer, ({ selectedDetail, onSetSelectedDetail }) => ({

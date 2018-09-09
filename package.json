@@ -14,11 +14,13 @@
   "dependencies": {
     "d3-delaunay": "^4.1.3",
     "d3-polygon": "^1.0.5",
+    "d3-scale-chromatic": "^1.3.3",
     "emotion": "^9.2.8",
     "fast-xml-parser": "^3.12.0",
     "lodash": "^4.17.10",
     "prop-types": "^15.6.2",
     "react": "^16.4.2",
+    "react-color": "^2.14.1",
     "react-dom": "^16.4.2",
     "react-dropzone": "^5.0.1",
     "react-emotion": "^9.2.8",

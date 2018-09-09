@@ -7,7 +7,7 @@ import withHandlers from 'recompose/withHandlers'
 import withProps from 'recompose/withProps'
 import { Header } from './Type'
 
-const FILTER_TYPES = ['towns', 'industries']
+const FILTER_TYPES = ['towns', 'industries', 'lines']
 
 const CheckboxInput = withProps({ type: 'checkbox' })(styled('input')`
     ${tw`relative mr-2`};

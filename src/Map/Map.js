@@ -4,9 +4,8 @@ import includes from 'lodash/includes'
 import { css } from 'react-emotion'
 import fromRenderProps from 'recompose/fromRenderProps'
 import MapContext from '../MapContext'
-import Industry from './Industry'
 import Label from './Label'
-import Town from './Town'
+import Station from './Station'
 
 const colors = {
     sky: '#B7DCE2',
@@ -34,12 +33,23 @@ class Map extends React.Component {
         this.setState({ width: window.innerWidth, height: window.innerHeight })
     }
 
+    getStations() {
+        const { towns, industries, selectedFilters } = this.props
+        const stations = []
+        if (includes(selectedFilters, 'industries')) {
+            stations.push(...industries.map(i => ({ ...i, type: Station.Industry })))
+        }
+        if (includes(selectedFilters, 'towns')) {
+            stations.push(...towns.map(t => ({ ...t, type: Station.Town })))
+        }
+        return stations
+    }
+
     render() {
-        let { size, towns, industries, displayedLabel, onSetDisplayedLabel, onSetSelectedDetail } = this.props
+        const { size, lines } = this.props
         const onScreenFontSize = 10
         const scale = Math.max(size.width / this.state.width, size.height / this.state.height)
-        const onScreenTownSize = 6
-        const onScreenIndustrySize = 10
+        const stations = this.getStations()
         return (
             <div className={mapRoot}>
                 <svg
@@ -61,55 +71,41 @@ class Map extends React.Component {
                         width={size.width}
                         fill={this.props.selectedGroundColor === 'us' ? colors.groundUs : colors.groundEu}
                     />
-                    {includes(this.props.selectedFilters, 'towns') && (
+                    {includes(this.props.selectedFilters, 'lines') && (
                         <g>
-                            {towns.map(({ x, y, label }) => (
-                                <Town
-                                    key={label}
-                                    x={x}
-                                    y={y}
-                                    size={scale * onScreenTownSize}
-                                    label={label}
-                                    displayedLabel={displayedLabel}
-                                    onSetDisplayedLabel={onSetDisplayedLabel}
-                                    onSetSelectedDetail={onSetSelectedDetail}
-                                />
-                            ))}
-                        </g>
-                    )}
-                    {includes(this.props.selectedFilters, 'industries') && (
-                        <g>
-                            {industries.map(({ x, y, label }) => (
-                                <Industry
-                                    key={label}
-                                    x={x}
-                                    y={y}
-                                    size={scale * onScreenIndustrySize}
-                                    label={label}
-                                    displayedLabel={displayedLabel}
-                                    onSetDisplayedLabel={onSetDisplayedLabel}
+                            {lines.map(line => (
+                                <polyline
+                                    key={line.id}
+                                    points={line.stops.map(({ x, y }) => [x, y].join(',')).join(' ')}
+                                    stroke={line.color}
+                                    strokeWidth={scale * 2}
+                                    fill="none"
                                 />
                             ))}
                         </g>
                     )}
                     <g>
-                        {towns.map(({ x, y, label }) => (
-                            <Label
-                                key={label}
-                                x={x}
-                                y={y}
-                                fontSize={scale * onScreenFontSize}
-                                displayedLabel={displayedLabel}>
-                                {label}
-                            </Label>
+                        {stations.map(station => (
+                            <Station
+                                key={station.label}
+                                scale={scale}
+                                {...station}
+                                displayedLabel={this.props.displayedLabel}
+                                selectedDetail={this.props.selectedDetail}
+                                onSetDisplayedLabel={this.props.onSetDisplayedLabel}
+                                onSetSelectedDetail={this.props.onSetSelectedDetail}
+                                onAddStop={this.props.onAddStop}
+                            />
                         ))}
-                        {industries.map(({ x, y, label }) => (
+                    </g>
+                    <g>
+                        {stations.map(({ x, y, label }) => (
                             <Label
                                 key={label}
                                 x={x}
                                 y={y}
                                 fontSize={scale * onScreenFontSize}
-                                displayedLabel={displayedLabel}>
+                                displayedLabel={this.props.displayedLabel}>
                                 {label}
                             </Label>
                         ))}
@@ -128,14 +124,4 @@ Map.propTypes = {
     onSetDisplayedLabel: PropTypes.any
 }
 
-export default fromRenderProps(
-    MapContext.Consumer,
-    ({ mapData, displayedLabel, selectedFilters, selectedGroundColor, onSetDisplayedLabel, onSetSelectedDetail }) => ({
-        ...mapData,
-        displayedLabel,
-        selectedFilters,
-        selectedGroundColor,
-        onSetDisplayedLabel,
-        onSetSelectedDetail
-    })
-)(Map)
+export default fromRenderProps(MapContext.Consumer, ({ mapData, ...props }) => ({ ...mapData, ...props }))(Map)
