@@ -1,10 +1,9 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import styled from 'react-emotion'
 import posed from 'react-pose'
 import compose from 'recompose/compose'
-import fromRenderProps from 'recompose/fromRenderProps'
 import withHandlers from 'recompose/withHandlers'
-import MapContext from '../MapContext'
 import LineDetail from './LineDetail'
 
 const transition = {
@@ -42,11 +41,15 @@ function renderDetail(selectedDetail) {
     }
 }
 
+const mapState = state => ({ selectedDetail: state.display.detail })
+
+const mapDispatch = ({ display: { setDetail } }) => ({ onSetSelectedDetail: setDetail })
+
 export default compose(
-    fromRenderProps(MapContext.Consumer, ({ selectedDetail, onSetSelectedDetail }) => ({
-        selectedDetail,
-        onSetSelectedDetail
-    })),
+    connect(
+        mapState,
+        mapDispatch
+    ),
     withHandlers({
         onClose: ({ onSetSelectedDetail }) => () => onSetSelectedDetail(null)
     })

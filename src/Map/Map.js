@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import includes from 'lodash/includes'
 import { css } from 'react-emotion'
-import fromRenderProps from 'recompose/fromRenderProps'
-import MapContext from '../MapContext'
+import store from '../store'
 import Label from './Label'
 import Station from './Station'
 
@@ -18,7 +18,8 @@ const mapRoot = css(tw`overflow-hidden`)
 class Map extends React.Component {
     state = {
         width: window.innerWidth,
-        height: window.innerHeight
+        height: window.innerHeight,
+        displayedLabel: null
     }
 
     componentDidMount() {
@@ -43,6 +44,10 @@ class Map extends React.Component {
             stations.push(...towns.map(t => ({ ...t, type: Station.Town })))
         }
         return stations
+    }
+
+    handleSetDisplayedLabel = label => {
+        this.setState({ displayedLabel: label })
     }
 
     render() {
@@ -90,9 +95,9 @@ class Map extends React.Component {
                                 key={station.label}
                                 scale={scale}
                                 {...station}
-                                displayedLabel={this.props.displayedLabel}
+                                displayedLabel={this.state.displayedLabel}
                                 selectedDetail={this.props.selectedDetail}
-                                onSetDisplayedLabel={this.props.onSetDisplayedLabel}
+                                onSetDisplayedLabel={this.handleSetDisplayedLabel}
                                 onSetSelectedDetail={this.props.onSetSelectedDetail}
                                 onAddStop={this.props.onAddStop}
                             />
@@ -105,7 +110,7 @@ class Map extends React.Component {
                                 x={x}
                                 y={y}
                                 fontSize={scale * onScreenFontSize}
-                                displayedLabel={this.props.displayedLabel}>
+                                displayedLabel={this.state.displayedLabel}>
                                 {label}
                             </Label>
                         ))}
@@ -119,9 +124,20 @@ class Map extends React.Component {
 Map.propTypes = {
     size: PropTypes.any,
     towns: PropTypes.any,
-    industries: PropTypes.any,
-    displayedLabel: PropTypes.any,
-    onSetDisplayedLabel: PropTypes.any
+    industries: PropTypes.any
 }
 
-export default fromRenderProps(MapContext.Consumer, ({ mapData, ...props }) => ({ ...mapData, ...props }))(Map)
+const mapState = state => ({
+    ...state.mapData,
+    selectedDetail: state.display.detail,
+    selectedFilters: state.settings.selectedFilters,
+    selectedGroundColor: state.settings.selectedGroundColor,
+    lines: store.select.lines.lines(state)
+})
+
+const mapDispatch = ({ lines: { addStop } }) => ({ onAddStop: addStop })
+
+export default connect(
+    mapState,
+    mapDispatch
+)(Map)

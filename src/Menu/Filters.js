@@ -1,13 +1,10 @@
 import React from 'react'
 import includes from 'lodash/includes'
 import map from 'lodash/map'
-import without from 'lodash/without'
 import styled from 'react-emotion'
 import withHandlers from 'recompose/withHandlers'
 import withProps from 'recompose/withProps'
 import { Header } from './Type'
-
-const FILTER_TYPES = ['towns', 'industries', 'lines']
 
 const CheckboxInput = withProps({ type: 'checkbox' })(styled('input')`
     ${tw`relative mr-2`};
@@ -20,11 +17,11 @@ const Checkbox = ({ children, ...props }) => (
     </label>
 )
 
-const Filters = ({ selectedFilters, onUpdateFilter }) => (
+const Filters = ({ availableFilters, selectedFilters, onUpdateFilter }) => (
     <div>
         <Header>{'Filter'}</Header>
         <div>
-            {map(FILTER_TYPES, type => (
+            {map(availableFilters, type => (
                 <div key={type}>
                     <Checkbox name={type} checked={includes(selectedFilters, type)} onChange={onUpdateFilter}>
                         {`Show ${type}`}
@@ -36,10 +33,11 @@ const Filters = ({ selectedFilters, onUpdateFilter }) => (
 )
 
 export default withHandlers({
-    onUpdateFilter: ({ selectedFilters: lastSelectedFilters, onSetSelectedFilters }) => event => {
-        const selectedFilters = event.target.checked
-            ? [...lastSelectedFilters, event.target.name]
-            : without(lastSelectedFilters, event.target.name)
-        onSetSelectedFilters(selectedFilters)
+    onUpdateFilter: ({ onAddFilter, onRemoveFilter }) => event => {
+        if (event.target.checked) {
+            onAddFilter(event.target.name)
+        } else {
+            onRemoveFilter(event.target.name)
+        }
     }
 })(Filters)

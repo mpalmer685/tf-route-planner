@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import styled, { css, cx, keyframes } from 'react-emotion'
 import Dropzone from 'react-dropzone'
 import Colors from '../config/colors'
@@ -62,9 +63,10 @@ const statusIndicatorError = css`
     box-shadow: 0 0 0 4px ${Colors['red-light']};
 `
 
+const SUPPORTED_FILE_TYPES = ['text/html', 'image/svg+xml']
+
 class GetStarted extends React.Component {
     static propTypes = {
-        supportedFileTypes: PropTypes.arrayOf(PropTypes.string).isRequired,
         onSubmitFile: PropTypes.func.isRequired
     }
 
@@ -78,6 +80,7 @@ class GetStarted extends React.Component {
         this.worker.addEventListener('message', event => this.props.onSubmitFile(event.data))
         this.worker.onerror = event => {
             this.setState({ loading: false, error: true })
+            console.warn(event.message)
             event.preventDefault()
         }
     }
@@ -106,7 +109,7 @@ class GetStarted extends React.Component {
                     <Dropzone
                         className={dropzone}
                         disablePreview
-                        accept={this.props.supportedFileTypes}
+                        accept={SUPPORTED_FILE_TYPES}
                         onDragEnter={this.handleResetError}
                         onDrop={this.handleDrop}>
                         {({ isDragAccept }) => (
@@ -142,4 +145,9 @@ class GetStarted extends React.Component {
     }
 }
 
-export default GetStarted
+const mapDispatch = ({ mapData: { setData } }) => ({ onSubmitFile: setData })
+
+export default connect(
+    null,
+    mapDispatch
+)(GetStarted)

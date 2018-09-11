@@ -1,9 +1,7 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import styled from 'react-emotion'
-import compose from 'recompose/compose'
-import fromRenderProps from 'recompose/fromRenderProps'
-import withProps from 'recompose/withProps'
-import MapContext from '../MapContext'
+import { select } from '../store'
 import ColorPicker from './ColorPicker'
 
 const Container = styled('div')(tw`pt-1 min-h-full`)
@@ -47,7 +45,7 @@ class LineDetail extends React.Component {
     }
 
     handleSetLineColor = color => {
-        this.props.onChangeLineColor(this.props.line.id, color.hex)
+        this.props.onUpdateLine({ ...this.props.line, color: color.hex })
     }
 
     handleSetEditing = () => {
@@ -59,7 +57,7 @@ class LineDetail extends React.Component {
             return
         }
         this.setState({ editingName: false })
-        this.props.onRenameLine(this.props.line.id, this.state.lineName)
+        this.props.onUpdateLine({ ...this.props.line, name: this.state.lineName })
     }
 
     handleNameChange = event => {
@@ -85,7 +83,7 @@ class LineDetail extends React.Component {
                             {name}
                             <RemoveStop
                                 className="group-hover:opacity-100"
-                                onClick={() => this.props.onRemoveStop(line.id, name)}>
+                                onClick={() => this.props.onRemoveStop({ lineId: line.id, stationName: name })}>
                                 {'\u00d7'}
                             </RemoveStop>
                         </Stop>
@@ -117,12 +115,11 @@ class LineDetail extends React.Component {
     }
 }
 
-export default compose(
-    fromRenderProps(MapContext.Consumer, ({ lines, onRenameLine, onChangeLineColor, onRemoveStop }) => ({
-        lines,
-        onRenameLine,
-        onChangeLineColor,
-        onRemoveStop
-    })),
-    withProps(({ lineId, lines }) => ({ line: lines.find(l => l.id === lineId) }))
+const mapState = select(models => ({ line: models.lines.line }))
+
+const mapDispatch = ({ lines: { updateLine, removeStop } }) => ({ onUpdateLine: updateLine, onRemoveStop: removeStop })
+
+export default connect(
+    mapState,
+    mapDispatch
 )(LineDetail)

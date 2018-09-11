@@ -41,7 +41,7 @@ const Station = compose(
         },
         onClick: ({ type, label, x, y, selectedDetail, onSetSelectedDetail, onAddStop }) => () => {
             if (selectedDetail && selectedDetail.type === 'line') {
-                onAddStop(selectedDetail.id, { name: label, x, y, type: type.name })
+                onAddStop({ lineId: selectedDetail.id, station: { name: label, x, y, type: type.name } })
                 return
             }
             console.log(selectedDetail)

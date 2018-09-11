@@ -3,14 +3,12 @@ import map from 'lodash/map'
 import withHandlers from 'recompose/withHandlers'
 import { Header } from './Type'
 
-const GROUND_COLORS = [{ value: 'us', label: 'America' }, { value: 'eu', label: 'Europe' }]
-
-const GroundColor = ({ selected, onChange }) => (
+const GroundColor = ({ options, selected, onChange }) => (
     <div>
         <Header>{'Ground color'}</Header>
         <div>
             <select value={selected} onChange={onChange}>
-                {map(GROUND_COLORS, ({ value, label }) => (
+                {map(options, ({ value, label }) => (
                     <option key={value} value={value}>
                         {label}
                     </option>

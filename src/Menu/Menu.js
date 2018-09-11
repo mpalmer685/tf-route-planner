@@ -1,10 +1,9 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import styled, { cx } from 'react-emotion'
 import posed from 'react-pose'
 import compose from 'recompose/compose'
-import fromRenderProps from 'recompose/fromRenderProps'
 import withStateHandlers from 'recompose/withStateHandlers'
-import MapContext from '../MapContext'
 import Filters from './Filters'
 import GroundColor from './GroundColor'
 import Lines from './Lines'
@@ -68,17 +67,36 @@ const MenuContainer = styled(posed.div(menuPoses))`
 `
 const MenuSection = styled('div')(tw`mb-6`)
 
-const Menu = ({ open, selectedFilters, selectedGroundColor, onToggle, onSetSelectedFilters, onSetGroundColor }) => (
+const Menu = ({
+    open,
+    availableFilters,
+    selectedFilters,
+    availableGroundColors,
+    selectedGroundColor,
+    onToggle,
+    onAddFilter,
+    onRemoveFilter,
+    onSetGroundColor
+}) => (
     <React.Fragment>
         <MenuContainer pose={open ? 'open' : 'closed'}>
             <MenuSection>
                 <Lines />
             </MenuSection>
             <MenuSection>
-                <Filters selectedFilters={selectedFilters} onSetSelectedFilters={onSetSelectedFilters} />
+                <Filters
+                    availableFilters={availableFilters}
+                    selectedFilters={selectedFilters}
+                    onAddFilter={onAddFilter}
+                    onRemoveFilter={onRemoveFilter}
+                />
             </MenuSection>
             <MenuSection>
-                <GroundColor selected={selectedGroundColor} onChange={onSetGroundColor} />
+                <GroundColor
+                    options={availableGroundColors}
+                    selected={selectedGroundColor}
+                    onChange={onSetGroundColor}
+                />
             </MenuSection>
         </MenuContainer>
         <MenuButton pose={open ? 'open' : 'closed'} className={cx({ open })} onClick={onToggle}>
@@ -87,6 +105,19 @@ const Menu = ({ open, selectedFilters, selectedGroundColor, onToggle, onSetSelec
     </React.Fragment>
 )
 
+const mapState = state => ({
+    availableFilters: state.settings.availableFilters,
+    selectedFilters: state.settings.selectedFilters,
+    availableGroundColors: state.settings.availableGroundColors,
+    selectedGroundColor: state.settings.selectedGroundColor
+})
+
+const mapDispatch = ({ settings: { addFilter, removeFilter, setGroundColor } }) => ({
+    onAddFilter: addFilter,
+    onRemoveFilter: removeFilter,
+    onSetGroundColor: setGroundColor
+})
+
 export default compose(
     withStateHandlers(
         { open: false },
@@ -94,13 +125,8 @@ export default compose(
             onToggle: ({ open }) => () => ({ open: !open })
         }
     ),
-    fromRenderProps(
-        MapContext.Consumer,
-        ({ selectedFilters, selectedGroundColor, onSetSelectedFilters, onSetGroundColor }) => ({
-            selectedFilters,
-            selectedGroundColor,
-            onSetSelectedFilters,
-            onSetGroundColor
-        })
+    connect(
+        mapState,
+        mapDispatch
     )
 )(Menu)
