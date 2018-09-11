@@ -88,8 +88,11 @@ function removeIndustryName(name) {
         .replace(/\s+#\d/, '')
 }
 
-function getMapSize({ viewBox }) {
-    const [, , width, height] = viewBox.split(' ').map(d => parseInt(d))
+function getMapSize({ viewBox, width, height }) {
+    if (viewBox) {
+        const [, , width, height] = viewBox.split(' ').map(d => parseInt(d))
+        return { width, height }
+    }
     return { width, height }
 }
 
