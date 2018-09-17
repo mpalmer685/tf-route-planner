@@ -8,13 +8,13 @@ Route planning tool for Transport Fever
 * [x] Upload map data from the [Map Export](https://steamcommunity.com/sharedfiles/filedetails/?id=1445899052) mod
 * [x] View map of towns and industries
 * [x] Add and edit routes that connect the towns and industries
+* [x] Interactivity: zoom and pan the map
 
 ## Planned Features
 
-* [ ] Interactivity: zoom and pan the map
 * [ ] Add, move, and rename stations
 * [ ] Start from an empty map
-* [ ] Uplaod map data from a `map.lua` file
+* [ ] Upload map data from a `map.lua` file
 * [ ] Improved display of routes:
   * [ ] Multiple lines that connect the same stations run in parallel instead of overlapping
   * [ ] "Intelligently" choose the order of lines as they pass through a station to minimize crossings as they enter/exit
