@@ -2083,8 +2083,11 @@ function removeIndustryName(name) {
         .replace(/\s+#\d/, '')
 }
 
-function getMapSize({ viewBox }) {
-    const [, , width, height] = viewBox.split(' ').map(d => parseInt(d))
+function getMapSize({ viewBox, width, height }) {
+    if (viewBox) {
+        const [, , width, height] = viewBox.split(' ').map(d => parseInt(d))
+        return { width, height }
+    }
     return { width, height }
 }
 
@@ -7110,4 +7113,4 @@ module.exports = {
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=56f03ebed7249b7d7910.worker.js.map
+//# sourceMappingURL=cc802f41269bef38b644.worker.js.map
