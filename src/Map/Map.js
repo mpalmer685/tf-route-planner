@@ -1,8 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import clamp from 'lodash/clamp'
 import includes from 'lodash/includes'
 import { css } from 'react-emotion'
+import svgPanZoom from 'svg-pan-zoom'
 import store from '../store'
 import Label from './Label'
 import Station from './Station'
@@ -16,14 +18,22 @@ const colors = {
 const mapRoot = css(tw`overflow-hidden`)
 
 class Map extends React.Component {
+    svg = React.createRef()
+
     state = {
         width: window.innerWidth,
         height: window.innerHeight,
-        displayedLabel: null
+        displayedLabel: null,
+        scale: 1
     }
 
     componentDidMount() {
         window.addEventListener('resize', this.updateDimensions)
+        this.panZoomInstance = svgPanZoom(this.svg.current, {
+            minZoom: 0.8,
+            onZoom: scale => this.setState({ scale }),
+            beforePan: this.handlePanLimits
+        })
     }
 
     componentWillUnmount() {
@@ -46,18 +56,35 @@ class Map extends React.Component {
         return stations
     }
 
+    handlePanLimits = (p1, p2) => {
+        const { size } = this.props
+        const scale = Math.max(size.width / this.state.width, size.height / this.state.height) / this.state.scale
+
+        const xMin = this.state.width / 2 - size.width / scale
+        const xMax = this.state.width / 2
+        const x = clamp(p2.x, xMin, xMax)
+
+        const yMin = this.state.height / 2 - size.height / scale
+        const yMax = this.state.height / 2
+        const y = clamp(p2.y, yMin, yMax)
+
+        return { x, y }
+    }
+
     handleSetDisplayedLabel = label => {
         this.setState({ displayedLabel: label })
     }
 
     render() {
         const { size, lines } = this.props
+        const { scale: zoomScale } = this.state
         const onScreenFontSize = 10
-        const scale = Math.max(size.width / this.state.width, size.height / this.state.height)
+        const scale = Math.max(size.width / this.state.width, size.height / this.state.height) / zoomScale
         const stations = this.getStations()
         return (
             <div className={mapRoot}>
                 <svg
+                    ref={this.svg}
                     className="block"
                     width={this.state.width}
                     height={this.state.height}

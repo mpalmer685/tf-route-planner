@@ -34,7 +34,8 @@
     "recompose": "^0.30.0",
     "redux": "^4.0.0",
     "redux-persist": "^5.10.0",
-    "skmeans": "^0.9.8"
+    "skmeans": "^0.9.8",
+    "svg-pan-zoom": "^3.5.3"
   },
   "devDependencies": {
     "babel-plugin-emotion": "^9.2.8",
