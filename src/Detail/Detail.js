@@ -34,7 +34,8 @@ function renderDetail(selectedDetail) {
     switch (selectedDetail.type) {
         case 'line':
             return <LineDetail lineId={selectedDetail.id} />
-        case 'station':
+        case 'town':
+        case 'industry':
             return selectedDetail.name
         default:
             return null

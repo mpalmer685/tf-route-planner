@@ -44,8 +44,11 @@ const Station = compose(
                 onAddStop({ lineId: selectedDetail.id, station: { name: label, x, y, type: type.name } })
                 return
             }
+            if (!selectedDetail || selectedDetail.type === 'industry' || selectedDetail.type === 'town') {
+                onSetSelectedDetail({ type: type.name, name: label })
+                return
+            }
             console.log(selectedDetail)
-            //onSetSelectedDetail(label)
         }
     }),
     setDisplayName('station')

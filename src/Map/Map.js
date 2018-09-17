@@ -166,7 +166,10 @@ const mapState = state => ({
     lines: store.select.lines.lines(state)
 })
 
-const mapDispatch = ({ lines: { addStop } }) => ({ onAddStop: addStop })
+const mapDispatch = ({ display: { setDetail }, lines: { addStop } }) => ({
+    onAddStop: addStop,
+    onSetSelectedDetail: setDetail
+})
 
 export default connect(
     mapState,
