@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import clamp from 'lodash/clamp'
 import includes from 'lodash/includes'
 import { css } from 'react-emotion'
 import svgPanZoom from 'svg-pan-zoom'
@@ -17,21 +16,29 @@ const colors = {
 
 const mapRoot = css(tw`overflow-hidden`)
 
+const getScale = (mapSize, windowSize, zoomFactor) =>
+    Math.max(mapSize.width / windowSize.width, mapSize.height / windowSize.height) / zoomFactor
+
+const initialState = (mapSize, window) => {
+    const windowSize = { width: window.innerWidth, height: window.innerHeight }
+    return {
+        windowSize,
+        displayedLabel: null,
+        scale: getScale(mapSize, windowSize, 1)
+    }
+}
+
 class Map extends React.Component {
     svg = React.createRef()
 
-    state = {
-        width: window.innerWidth,
-        height: window.innerHeight,
-        displayedLabel: null,
-        scale: 1
-    }
+    state = initialState(this.props.size, window)
 
     componentDidMount() {
         window.addEventListener('resize', this.updateDimensions)
         this.panZoomInstance = svgPanZoom(this.svg.current, {
             minZoom: 0.8,
-            onZoom: scale => this.setState({ scale }),
+            onZoom: zoomFactor =>
+                this.setState({ scale: getScale(this.props.size, this.state.windowSize, zoomFactor) }),
             beforePan: this.handlePanLimits
         })
     }
@@ -41,7 +48,7 @@ class Map extends React.Component {
     }
 
     updateDimensions = () => {
-        this.setState({ width: window.innerWidth, height: window.innerHeight })
+        this.setState({ windowSize: { width: window.innerWidth, height: window.innerHeight } })
     }
 
     getStations() {
@@ -58,17 +65,15 @@ class Map extends React.Component {
 
     handlePanLimits = (p1, p2) => {
         const { size } = this.props
-        const scale = Math.max(size.width / this.state.width, size.height / this.state.height) / this.state.scale
+        const { windowSize, scale } = this.state
 
-        const xMin = this.state.width / 2 - size.width / scale
-        const xMax = this.state.width / 2
-        const x = clamp(p2.x, xMin, xMax)
+        const xMin = windowSize.width / 2 - size.width / scale
+        const xMax = windowSize.width / 2
 
-        const yMin = this.state.height / 2 - size.height / scale
-        const yMax = this.state.height / 2
-        const y = clamp(p2.y, yMin, yMax)
+        const yMin = windowSize.height / 2 - size.height / scale
+        const yMax = windowSize.height / 2
 
-        return { x, y }
+        return { x: xMin < p2.x && xMax > p2.x, y: yMin < p2.y && yMax > p2.y }
     }
 
     handleSetDisplayedLabel = label => {
@@ -77,17 +82,16 @@ class Map extends React.Component {
 
     render() {
         const { size, lines } = this.props
-        const { scale: zoomScale } = this.state
+        const { scale, windowSize } = this.state
         const onScreenFontSize = 10
-        const scale = Math.max(size.width / this.state.width, size.height / this.state.height) / zoomScale
         const stations = this.getStations()
         return (
             <div className={mapRoot}>
                 <svg
                     ref={this.svg}
                     className="block"
-                    width={this.state.width}
-                    height={this.state.height}
+                    width={windowSize.width}
+                    height={windowSize.height}
                     viewBox={`0 0 ${size.width} ${size.height}`}>
                     <rect
                         x={-size.width}
