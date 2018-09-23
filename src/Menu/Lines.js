@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { schemeCategory10 } from 'd3-scale-chromatic'
 import sample from 'lodash/sample'
+import sortBy from 'lodash/sortBy'
 import { css } from 'react-emotion'
 import compose from 'recompose/compose'
 import withHandlers from 'recompose/withHandlers'
@@ -25,7 +26,7 @@ const Lines = ({ lines, onAddLine, onLineClick }) => (
     <div>
         <Header>{'Lines'}</Header>
         <ul css={tw`mb-4 list-reset`}>
-            {lines.map(line => (
+            {sortBy(lines, 'name').map(line => (
                 <Line key={line.id} id={line.id} name={line.name} onClick={onLineClick} />
             ))}
         </ul>
