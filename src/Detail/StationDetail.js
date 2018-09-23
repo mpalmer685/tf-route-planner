@@ -10,7 +10,12 @@ const EditButton = styled('span')(tw`opacity-0 text-sm font-normal float-right`)
 const NameInput = styled('input')(tw`mb-2`)
 
 class StationDetail extends React.Component {
-    static propTypes = {}
+    static propTypes = {
+        station: PropTypes.shape({
+            name: PropTypes.string.isRequired
+        }).isRequired,
+        onUpdateStation: PropTypes.func.isRequired
+    }
 
     state = {
         editingName: false,
