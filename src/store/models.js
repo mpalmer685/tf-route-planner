@@ -47,6 +47,11 @@ const display = {
         setDetail: (state, detail) => ({ ...state, detail }),
         'lines/addLine': produce((state, line) => {
             state.detail = { type: 'line', id: line.id }
+        }),
+        'lines/removeLine': produce((state, lineId) => {
+            if (state.detail && state.detail.id === lineId) {
+                state.detail = null
+            }
         })
     }
 }
@@ -88,6 +93,11 @@ const lines = {
         }),
         updateLine: produce((state, line) => {
             state.linesById[line.id] = line
+        }),
+        removeLine: produce((state, lineId) => {
+            state.lines = without(state.lines, lineId)
+            delete state.linesById[lineId]
+            delete state.stopsByLine[lineId]
         }),
         addStop: produce((state, { lineId, station }) => {
             state.stopsByLine[lineId].push(station.name)
