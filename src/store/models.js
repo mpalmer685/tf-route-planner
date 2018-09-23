@@ -1,3 +1,4 @@
+import produce from 'immer'
 import map from 'lodash/map'
 import reduce from 'lodash/reduce'
 import without from 'lodash/without'
@@ -17,9 +18,8 @@ const mapData = {
             )
             return { size, stationsById, stations: map(stations, 'id') }
         },
-        updateStation: (state, station) => ({
-            ...state,
-            stationsById: { ...state.stationsById, [station.id]: station }
+        updateStation: produce((state, station) => {
+            state.stationsById[station.id] = station
         })
     },
     selectors: (slice, createSelector) => ({
@@ -45,7 +45,9 @@ const display = {
     },
     reducers: {
         setDetail: (state, detail) => ({ ...state, detail }),
-        'lines/addLine': (state, line) => ({ ...state, detail: { type: 'line', id: line.id } })
+        'lines/addLine': produce((state, line) => {
+            state.detail = { type: 'line', id: line.id }
+        })
     }
 }
 
@@ -59,9 +61,15 @@ const settings = {
         selectedGroundColor: 'us'
     },
     reducers: {
-        addFilter: (state, filter) => ({ ...state, selectedFilters: [...state.selectedFilters, filter] }),
-        removeFilter: (state, filter) => ({ ...state, selectedFilters: without(state.selectedFilters, filter) }),
-        setGroundColor: (state, colorCode) => ({ ...state, selectedGroundColor: colorCode })
+        addFilter: produce((state, filter) => {
+            state.selectedFilters.push(filter)
+        }),
+        removeFilter: produce((state, filter) => {
+            state.selectedFilters = without(state.selectedFilters, filter)
+        }),
+        setGroundColor: produce((state, colorCode) => {
+            state.selectedGroundColor = colorCode
+        })
     }
 }
 
@@ -73,28 +81,21 @@ const lines = {
         stations: {}
     },
     reducers: {
-        addLine: (state, line) => ({
-            ...state,
-            lines: [...state.lines, line.id],
-            linesById: { ...state.linesById, [line.id]: line },
-            stopsByLine: { ...state.stopsByLine, [line.id]: [] }
+        addLine: produce((state, line) => {
+            state.lines.push(line.id)
+            state.linesById[line.id] = line
+            state.stopsByLine[line.id] = []
         }),
-        updateLine: (state, line) => ({ ...state, linesById: { ...state.linesById, [line.id]: line } }),
-        addStop: (state, { lineId, station }) => {
-            const stops = state.stopsByLine[lineId]
-            return {
-                ...state,
-                stopsByLine: { ...state.stopsByLine, [lineId]: [...stops, station.name] },
-                stations: { ...state.stations, [station.name]: station }
-            }
-        },
-        removeStop: (state, { lineId, stationName }) => {
-            const stops = state.stopsByLine[lineId]
-            return {
-                ...state,
-                stopsByLine: { ...state.stopsByLine, [lineId]: without(stops, stationName) }
-            }
-        }
+        updateLine: produce((state, line) => {
+            state.linesById[line.id] = line
+        }),
+        addStop: produce((state, { lineId, station }) => {
+            state.stopsByLine[lineId].push(station.name)
+            state.stations[station.name] = station
+        }),
+        removeStop: produce((state, { lineId, stationName }) => {
+            state.stopsByLine[lineId] = without(state.stopsByLine[lineId], stationName)
+        })
     },
     selectors: (slice, createSelector) => ({
         lines() {
