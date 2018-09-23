@@ -4535,6 +4535,10 @@ jsx-ast-utils@^2.0.0:
   dependencies:
     array-includes "^3.0.3"
 
+keymirror@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/keymirror/-/keymirror-0.1.1.tgz#918889ea13f8d0a42e7c557250eee713adc95c35"
+
 killable@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/killable/-/killable-1.0.0.tgz#da8b84bd47de5395878f95d64d02f2449fe05e6b"
@@ -7523,6 +7527,10 @@ union-value@^1.0.0:
 uniq@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/uniq/-/uniq-1.0.1.tgz#b31c5ae8254844a3a8281541ce2b04b865a734ff"
+
+uniqid@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/uniqid/-/uniqid-5.0.3.tgz#917968310edc868d50df6c44f783f32c7d80fac1"
 
 uniqs@^2.0.0:
   version "2.0.0"

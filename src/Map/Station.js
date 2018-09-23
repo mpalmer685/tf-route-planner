@@ -29,23 +29,23 @@ const StationInternal = ({ type, onMouseOver, onMouseOut, onClick, ...props }) =
 
 const Station = compose(
     withHandlers({
-        onMouseOver: ({ displayedLabel, label, onSetDisplayedLabel }) => () => {
+        onMouseOver: ({ displayedLabel, name, onSetDisplayedLabel }) => () => {
             if (!displayedLabel) {
-                onSetDisplayedLabel(label)
+                onSetDisplayedLabel(name)
             }
         },
-        onMouseOut: ({ displayedLabel, label, onSetDisplayedLabel }) => () => {
-            if (displayedLabel === label) {
+        onMouseOut: ({ displayedLabel, name, onSetDisplayedLabel }) => () => {
+            if (displayedLabel === name) {
                 onSetDisplayedLabel(null)
             }
         },
-        onClick: ({ type, label, x, y, selectedDetail, onSetSelectedDetail, onAddStop }) => () => {
+        onClick: ({ id, type, name, x, y, selectedDetail, onSetSelectedDetail, onAddStop }) => () => {
             if (selectedDetail && selectedDetail.type === 'line') {
-                onAddStop({ lineId: selectedDetail.id, station: { name: label, x, y, type: type.name } })
+                onAddStop({ lineId: selectedDetail.id, station: { name, x, y, type: type.name } })
                 return
             }
             if (!selectedDetail || selectedDetail.type === 'industry' || selectedDetail.type === 'town') {
-                onSetSelectedDetail({ type: type.name, name: label })
+                onSetSelectedDetail({ type: type.name, id })
                 return
             }
             console.log(selectedDetail)

@@ -5,6 +5,7 @@ import posed from 'react-pose'
 import compose from 'recompose/compose'
 import withHandlers from 'recompose/withHandlers'
 import LineDetail from './LineDetail'
+import StationDetail from './StationDetail'
 
 const transition = {
     type: 'tween'
@@ -36,7 +37,7 @@ function renderDetail(selectedDetail) {
             return <LineDetail lineId={selectedDetail.id} />
         case 'town':
         case 'industry':
-            return selectedDetail.name
+            return <StationDetail stationId={selectedDetail.id}/>
         default:
             return null
     }

@@ -6,7 +6,10 @@ import get from 'lodash/get'
 import groupBy from 'lodash/groupBy'
 import partition from 'lodash/partition'
 import skmeans from 'skmeans'
+import generateId from 'uniqid'
+import StationType from './StationType'
 
+// eslint-disable-next-line no-restricted-globals
 self.addEventListener('message', parseMap)
 
 const INDUSTRY_NAMES = [
@@ -90,44 +93,44 @@ function removeIndustryName(name) {
 
 function getMapSize({ viewBox, width, height }) {
     if (viewBox) {
-        const [, , width, height] = viewBox.split(' ').map(d => parseInt(d))
+        const [, , width, height] = viewBox.split(' ').map(d => parseInt(d, 10))
         return { width, height }
     }
     return { width, height }
 }
 
 function getIndustries(industryNodes, findLabel) {
-    const industries = industryNodes.map(getIndustryLocation).map(addIndustryLabel)
-    const industriesByLabel = groupBy(industries, 'label')
-    Object.keys(industriesByLabel).forEach(label => {
-        const i = industriesByLabel[label]
+    const industries = industryNodes.map(getIndustry)
+    const industriesByLabel = groupBy(industries, 'name')
+    Object.keys(industriesByLabel).forEach(name => {
+        const i = industriesByLabel[name]
         if (i.length > 1) {
             i.forEach(l => {
-                l.label = 'Unknown industry'
+                l.name = 'Unknown industry'
             })
         }
     })
 
     return industries
 
-    function getIndustryLocation(node) {
+    function getIndustry(node) {
         const points = node.attrs.points.split(' ').map(pair => pair.split(',').map(f => parseFloat(f)))
         const [x, y] = polygonCentroid(points)
-        return { x, y }
-    }
-
-    function addIndustryLabel(node) {
-        const closestLabel = findLabel(node.x, node.y)
-        const nodeWithLabel = Object.assign({}, node)
-        nodeWithLabel.label = get(closestLabel, '#text', 'Unknown Industry')
-        return nodeWithLabel
+        const closestLabel = findLabel(x, y)
+        return {
+            id: generateId(),
+            x,
+            y,
+            name: get(closestLabel, '#text', 'Unknown Industry'),
+            stationType: StationType.Industry
+        }
     }
 }
 
 function getTowns(townBuildings, townGroups, townNames, industries, findLabel) {
     const points = townBuildings.map(d => d.attrs.points).map(getPoints)
 
-    const industriesByTownName = groupBy(industries, i => townNames.find(n => i.label.startsWith(n)))
+    const industriesByTownName = groupBy(industries, i => townNames.find(n => i.name.startsWith(n)))
     const initialCentroids = Object.keys(industriesByTownName)
         .map(name => industriesByTownName[name][0])
         .map(({ x, y }) => [x, y])
@@ -138,9 +141,11 @@ function getTowns(townBuildings, townGroups, townNames, industries, findLabel) {
         const [x, y] = c
         const closestLabel = findLabel(x, y)
         return {
+            id: generateId(),
             x,
             y,
-            label: removeIndustryName(closestLabel.label)
+            name: removeIndustryName(closestLabel.name),
+            stationType: StationType.Town
         }
     })
 }

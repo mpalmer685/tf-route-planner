@@ -5,6 +5,7 @@ import includes from 'lodash/includes'
 import { css } from 'react-emotion'
 import svgPanZoom from 'svg-pan-zoom'
 import store from '../store'
+import StationType from '../StationType'
 import Label from './Label'
 import Station from './Station'
 
@@ -29,6 +30,25 @@ const initialState = (mapSize, window) => {
 }
 
 class Map extends React.Component {
+    static propTypes = {
+        size: PropTypes.shape({
+            width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+            height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
+        }).isRequired,
+        stations: PropTypes.arrayOf(
+            PropTypes.shape({
+                stationType: PropTypes.oneOf(Object.keys(StationType)).isRequired
+            })
+        ).isRequired,
+        selectedDetail: PropTypes.object,
+        selectedFilters: PropTypes.array.isRequired,
+        selectedGroundColor: PropTypes.oneOf(['us', 'eu']).isRequired,
+        lines: PropTypes.array.isRequired,
+
+        onAddStop: PropTypes.func.isRequired,
+        onSetSelectedDetail: PropTypes.func.isRequired
+    }
+
     svg = React.createRef()
 
     state = initialState(this.props.size, window)
@@ -52,15 +72,30 @@ class Map extends React.Component {
     }
 
     getStations() {
-        const { towns, industries, selectedFilters } = this.props
-        const stations = []
-        if (includes(selectedFilters, 'industries')) {
-            stations.push(...industries.map(i => ({ ...i, type: Station.Industry })))
+        const { stations, selectedFilters } = this.props
+        return stations.filter(isIncluded).map(s => ({ ...s, type: getType(s.stationType) }))
+
+        function isIncluded(station) {
+            switch (station.stationType) {
+                case StationType.Industry:
+                    return includes(selectedFilters, 'industries')
+                case StationType.Town:
+                    return includes(selectedFilters, 'towns')
+                default:
+                    throw new Error(`Unrecognized station type "${station.stationType}"`)
+            }
         }
-        if (includes(selectedFilters, 'towns')) {
-            stations.push(...towns.map(t => ({ ...t, type: Station.Town })))
+
+        function getType(type) {
+            switch (type) {
+                case StationType.Industry:
+                    return Station.Industry
+                case StationType.Town:
+                    return Station.Town
+                default:
+                    throw new Error(`Unrecognized station type "${type}"`)
+            }
         }
-        return stations
     }
 
     handlePanLimits = (p1, p2) => {
@@ -123,7 +158,7 @@ class Map extends React.Component {
                     <g>
                         {stations.map(station => (
                             <Station
-                                key={station.label}
+                                key={station.id}
                                 scale={scale}
                                 {...station}
                                 displayedLabel={this.state.displayedLabel}
@@ -135,14 +170,14 @@ class Map extends React.Component {
                         ))}
                     </g>
                     <g>
-                        {stations.map(({ x, y, label }) => (
+                        {stations.map(({ x, y, name }) => (
                             <Label
-                                key={label}
+                                key={name}
                                 x={x}
                                 y={y}
                                 fontSize={scale * onScreenFontSize}
                                 displayedLabel={this.state.displayedLabel}>
-                                {label}
+                                {name}
                             </Label>
                         ))}
                     </g>
@@ -152,14 +187,9 @@ class Map extends React.Component {
     }
 }
 
-Map.propTypes = {
-    size: PropTypes.any,
-    towns: PropTypes.any,
-    industries: PropTypes.any
-}
-
 const mapState = state => ({
-    ...state.mapData,
+    size: state.mapData.size,
+    stations: store.select.mapData.stations(state),
     selectedDetail: state.display.detail,
     selectedFilters: state.settings.selectedFilters,
     selectedGroundColor: state.settings.selectedGroundColor,

@@ -1,10 +1,42 @@
+import map from 'lodash/map'
+import reduce from 'lodash/reduce'
 import without from 'lodash/without'
 
 const mapData = {
     state: null,
     reducers: {
-        setData: (state, data) => data
-    }
+        setData: (state, { size, towns, industries }) => {
+            const stations = [...towns, ...industries]
+            const stationsById = reduce(
+                stations,
+                (all, station) => {
+                    all[station.id] = station
+                    return all
+                },
+                {}
+            )
+            return { size, stationsById, stations: map(stations, 'id') }
+        },
+        updateStation: (state, station) => ({
+            ...state,
+            stationsById: { ...state.stationsById, [station.id]: station }
+        })
+    },
+    selectors: (slice, createSelector) => ({
+        stations() {
+            return slice(state => {
+                const { stations, stationsById } = state
+                return map(stations, id => stationsById[id])
+            })
+        },
+        station() {
+            return createSelector(
+                slice,
+                (state, props) => props.stationId,
+                (state, stationId) => state.stationsById[stationId]
+            )
+        }
+    })
 }
 
 const display = {
