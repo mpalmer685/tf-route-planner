@@ -28,18 +28,17 @@ const loadingAnimation = keyframes`
     }
 `
 
-// prettier-ignore
 const statusIndicator = css`
     ${tw`h-64 w-64 relative rounded-full inline-block mb-4 inline-flex items-center justify-center`};
-    box-shadow: 0 0 0 4px ${Colors['grey-light']};
+    box-shadow: 0 0 0 4px ${Colors.greyLight};
     transition: box-shadow 400ms;
-    
+
     svg {
         transition: opacity 400ms;
     }
 `
 const statusIndicatorActive = css`
-    box-shadow: 0 0 0 4px ${Colors['green-light']}, inset 0 0 64px ${Colors['green-light']};
+    box-shadow: 0 0 0 4px ${Colors.greenLight}, inset 0 0 64px ${Colors.greenLight};
 
     svg {
         opacity: 0.25;
@@ -51,7 +50,7 @@ const statusIndicatorLoading = css`
     &:after {
         ${tw`absolute pin rounded-full`};
         content: '';
-        box-shadow: 0 0 48px 2px ${Colors['green-light']}, inset 0 0 48px 2px ${Colors['green-light']};
+        box-shadow: 0 0 48px 2px ${Colors.greenLight}, inset 0 0 48px 2px ${Colors.greenLight};
         animation: ${loadingAnimation} 1s ease-in-out infinite alternate;
     }
 
@@ -60,7 +59,7 @@ const statusIndicatorLoading = css`
     }
 `
 const statusIndicatorError = css`
-    box-shadow: 0 0 0 4px ${Colors['red-light']};
+    box-shadow: 0 0 0 4px ${Colors.redLight};
 `
 
 const SUPPORTED_FILE_TYPES = ['text/html', 'image/svg+xml']

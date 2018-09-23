@@ -1,4 +1,7 @@
-module.exports = {
+const mapKeys = require('lodash/mapKeys')
+const camelCase = require('lodash/camelCase')
+
+const colors = {
     transparent: 'transparent',
 
     black: '#22292f',
@@ -83,3 +86,8 @@ module.exports = {
     'pink-lighter': '#ffbbca',
     'pink-lightest': '#ffebef'
 }
+
+const Colors = mapKeys(colors, (value, key) => camelCase(key))
+
+module.exports = Colors
+module.exports.colors = colors

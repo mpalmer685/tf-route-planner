@@ -42,7 +42,7 @@ View the full documentation at https://tailwindcss.com.
 |
 */
 
-const colors = require('./colors')
+const colors = require('./colors').colors
 
 module.exports = {
     /*
